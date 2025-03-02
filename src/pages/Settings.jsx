@@ -2,6 +2,12 @@ import { useNavigate } from "react-router-dom";
 
 const Settings = () => {
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    navigate("/login");
+    return null;
+  }
 
   const handleDeleteAccount = async () => {
     const confirmDelete = window.confirm(
@@ -9,8 +15,6 @@ const Settings = () => {
     );
     
     if (!confirmDelete) return;
-
-    const token = localStorage.getItem("token");
 
     try {
       const response = await fetch("http://localhost:5000/users/me", {
@@ -21,15 +25,12 @@ const Settings = () => {
         },
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Tilin poistaminen epäonnistui.");
-      }
+      if (!response.ok) throw new Error("Tilin poistaminen epäonnistui.");
 
       alert("Tilisi on poistettu onnistuneesti.");
-      localStorage.removeItem("token"); // Poistetaan token, koska käyttäjä ei ole enää olemassa
-      navigate("/login"); // Ohjataan takaisin kirjautumiseen
+      localStorage.removeItem("token");
+      window.dispatchEvent(new Event("storage")); // Pakotetaan tilan päivitys
+      navigate("/login");
 
     } catch (error) {
       console.error("Virhe tilin poistamisessa:", error);

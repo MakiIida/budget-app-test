@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext"; // Importoidaan Context
 
 const Dashboard = () => {
+  const { setIsAuthenticated } = useContext(AuthContext); 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -24,21 +26,17 @@ const Dashboard = () => {
           }
         });
 
-        if (!response.ok) {
-          throw new Error("Käyttäjätietojen haku epäonnistui: ");
-        }
+        if (!response.ok) throw new Error("Käyttäjätietojen haku epäonnistui");
 
         const data = await response.json();
-
-        if (!data || !data.name) {
-          throw new Error("Virheelliset käyttäjätiedot.");
-        }
-
+        if (!data || !data.name) throw new Error("Virheelliset käyttäjätiedot.");
+        
         setUser(data);
       } catch (error) {
         console.error("Virhe haettaessa käyttäjätietoja:", error);
-        localStorage.removeItem("token"); // Poistetaan token, jos jotain meni pieleen
-        navigate("/login"); // Ohjataan takaisin kirjautumiseen
+        localStorage.removeItem("token");
+        setIsAuthenticated(false);
+        navigate("/login");
       } finally {
         setLoading(false);
       }
@@ -49,27 +47,30 @@ const Dashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    setIsAuthenticated(false); 
     navigate("/login");
   };
 
   return (
     <div className="dashboard">
       <h2>Budjettisovellus</h2>
-  
+
       {loading ? (
-        <p style={{ color: "black" }}>⏳ Ladataan tietoja...</p>
+        <p>⏳ Ladataan tietoja...</p>
       ) : user && user.name ? (
         <>
           <h3 style={{ color: "black", fontWeight: "bold" }}>✅ Tervetuloa, {user.name}!</h3>
+          <nav>
+            <Link to="/">🏠 Etusivu</Link>
+            <Link to="/budget-list">📑 Tallennetut budjetit</Link>
+            <Link to="/new-budget">➕ Luo uusi budjetti</Link>
+            <Link to="/settings">⚙️ Asetukset</Link>
+          </nav>
+          <button onClick={handleLogout}>Kirjaudu ulos</button>
         </>
       ) : (
-        <p style={{ color: "red", fontWeight: "bold" }}>⚠️ Käyttäjätietojen haku epäonnistui.</p>
+        <p>⚠️ Käyttäjätietojen haku epäonnistui.</p>
       )}
-  
-      <button onClick={handleLogout}>Kirjaudu ulos</button>
-      <button onClick={() => navigate("/settings")} style={{ marginLeft: "10px" }}>
-        Asetukset
-      </button>
     </div>
   );
 };

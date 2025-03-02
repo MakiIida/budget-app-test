@@ -1,42 +1,43 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext"; // Importoidaan Context
 
 const Login = () => {
+  const { setIsAuthenticated } = useContext(AuthContext); // Käytä Contextin setIsAuthenticated
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(null);
 
     try {
-      const response = await fetch("https://budget-app-backend-1f5i.onrender.com/login", {
+      const response = await fetch("http://localhost:5000/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
+
       if (!response.ok) {
-        throw new Error(data.error || "Kirjautuminen epäonnistui");
+        throw new Error(data.error || "Kirjautuminen epäonnistui.");
       }
 
-      // Tallenna token localStorageen
       localStorage.setItem("token", data.token);
-
-      // Ohjaa Dashboardiin
+      setIsAuthenticated(true); // Päivitetään tila
       navigate("/dashboard");
-    } catch (err) {
-      setError(err.message);
+
+    } catch (error) {
+      console.error("Kirjautumisvirhe:", error);
+      alert(error.message);
     }
   };
 
   return (
-    <div className="auth-container">
+    <div className="login">
       <h2>Kirjaudu sisään</h2>
-      {error && <p className="error">{error}</p>}
       <form onSubmit={handleLogin}>
         <input
           type="email"

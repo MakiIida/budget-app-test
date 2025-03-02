@@ -1,49 +1,54 @@
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useContext } from "react";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
-import Settings from "./pages/Settings"; 
+import Settings from "./pages/Settings";
+import BudgetList from "./pages/BudgetList";
+import NewBudget from "./pages/NewBudget";
+import { AuthProvider, AuthContext } from "./context/AuthContext";
+import EditBudget from "./pages/EditBudget";
+
 import "./App.css";
 import "./styles.css";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  return (
+    <AuthProvider>
+      <Router>
+        <MainApp />
+      </Router>
+    </AuthProvider>
+  );
+}
 
-  // Tarkistetaan kirjautumisen tila
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsAuthenticated(!!token); // Asetetaan true jos token löytyy
-  }, []);
+function MainApp() {
+  const { isAuthenticated } = useContext(AuthContext); // Käytä autentikaation tilaa
 
   return (
-    <Router>
-      <div className="container">
-        <h1>Budjettisovellus</h1>
+    <div className="container">
+      <h1>Budjettisovellus</h1>
 
-        {/* Näytetään napit vain, jos käyttäjä ei ole kirjautunut sisään */}
-        {!isAuthenticated && (
-          <nav>
-            <Link to="/login">
-              <button>Kirjaudu sisään</button>
-            </Link>
-            <Link to="/register">
-              <button>Rekisteröidy</button>
-            </Link>
-          </nav>
-        )}
+      {/* Näytetään Kirjaudu sisään / Rekisteröidy vain jos käyttäjä EI ole kirjautunut */}
+      {!isAuthenticated && (
+        <nav>
+          <Link to="/login"><button>Kirjaudu sisään</button></Link>
+          <Link to="/register"><button>Rekisteröidy</button></Link>
+        </nav>
+      )}
 
-        <Routes>
-          <Route path="/" element={<h2>Tervetuloa Budjettisovellukseen!</h2>} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/settings" element={<Settings />} />
-        </Routes>
-      </div>
-    </Router>
+      <Routes>
+        <Route path="/" element={<h2>Tervetuloa Budjettisovellukseen!</h2>} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/budget-list" element={<BudgetList />} />
+        <Route path="/new-budget" element={<NewBudget />} />
+        <Route path="/edit-budget/:id" element={<EditBudget />} />
+      </Routes>
+    </div>
   );
 }
 
 export default App;
-
