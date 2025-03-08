@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useContext } from "react";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -27,15 +27,8 @@ function MainApp() {
 
   return (
     <div className="container">
-      <h1>Budjettisovellus</h1>
-
-      {/* Näytetään Kirjaudu sisään / Rekisteröidy vain jos käyttäjä EI ole kirjautunut */}
-      {!isAuthenticated && (
-        <nav>
-          <Link to="/login"><button>Kirjaudu sisään</button></Link>
-          <Link to="/register"><button>Rekisteröidy</button></Link>
-        </nav>
-      )}
+      {/* Otsikko pysyy kaikilla sivuilla */}
+      <h1 style={{ textAlign: "center", color: "black", fontSize: "53px", fontWeight: "bold" }}>Budjettisovellus</h1>
 
       <Routes>
         <Route path="/" element={<h2>Tervetuloa Budjettisovellukseen!</h2>} />
@@ -52,3 +45,4 @@ function MainApp() {
 }
 
 export default App;
+

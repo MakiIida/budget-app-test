@@ -68,6 +68,8 @@ const EditBudget = () => {
   const handleSave = async () => {
     try {
       const token = localStorage.getItem("token");
+      console.log("Saving budget with ID:", id);
+
       const response = await fetch(`http://localhost:5000/api/budgets/${id}`, {
         method: "PUT",
         headers: {
@@ -76,8 +78,10 @@ const EditBudget = () => {
         },
         body: JSON.stringify({
           income,
-          planned_expenses: plannedExpenses,
-          actual_expenses: actualExpenses
+          planned_expenses: expenses.planned,  // Varmista, että oikea muuttuja käytössä
+          actual_expenses: expenses.actual     // Varmista, että oikea muuttuja käytössä
+          // planned_expenses: plannedExpenses,
+          // actual_expenses: actualExpenses
         })
       });
 
