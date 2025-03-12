@@ -142,10 +142,11 @@ const Login = () => {
             type="submit"
             disabled={loading}
             style={{
-              backgroundColor: "skyblue",
+              backgroundColor: "SteelBlue",
               color: "white",
               padding: "12px",
               fontSize: "16px",
+              fontWeight: "bold",
               border: "none",
               borderRadius: "5px",
               cursor: "pointer",
@@ -162,10 +163,11 @@ const Login = () => {
           <button
             onClick={() => navigate("/register")}
             style={{
-              backgroundColor: "skyblue",
+              backgroundColor: "SteelBlue",
               color: "white",
               padding: "12px",
               fontSize: "16px",
+              fontWeight: "bold",
               border: "none",
               borderRadius: "5px",
               cursor: "pointer",

@@ -157,10 +157,11 @@ const Register = ({ setIsAuthenticated }) => {
           <button 
             type="submit" 
             style={{
-              backgroundColor: "skyblue",
+              backgroundColor: "SteelBlue",
               color: "white",
               padding: "12px",
               fontSize: "16px",
+              fontWeight: "bold", 
               border: "none",
               borderRadius: "5px",
               cursor: "pointer",
@@ -179,6 +180,7 @@ const Register = ({ setIsAuthenticated }) => {
               color: "white",
               padding: "12px",
               fontSize: "16px",
+              fontWeight: "bold", 
               border: "none",
               borderRadius: "5px",
               cursor: "pointer",
