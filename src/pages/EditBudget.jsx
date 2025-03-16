@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const EditBudget = () => {
+  // Haetaan budjetin ID URL-parametreista ja alustetaan navigointi
   const { id } = useParams();
   const navigate = useNavigate();
+
+  // Tilamuuttujat budjetin ja tapahtumien hallintaan
   const [budget, setBudget] = useState(null);
   const [income, setIncome] = useState("");
   const [plannedExpenses, setPlannedExpenses] = useState(0);
-  const [actualExpenses, setActualExpenses] = useState(0);
   const [transactions, setTransactions] = useState([]);
   const [transactionType, setTransactionType] = useState("meno");
   const [summa, setSumma] = useState("");
@@ -15,10 +19,11 @@ const EditBudget = () => {
   const [addedExpenses, setAddedExpenses] = useState([]);
   const [addedIncomes, setAddedIncomes] = useState([]);
 
+    // Haetaan budjetin tiedot palvelimelta
     const fetchBudget = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(`http://localhost:5000/api/budgets/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/budgets/${id}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -33,59 +38,60 @@ const EditBudget = () => {
         const data = await response.json();
         console.log("API Response:", data);
     
+        // Tallennetaan budjetin tiedot tila-muuttujiin
         setBudget(data);
         setIncome(data.actual_income ? Number(data.actual_income) : 0);
-        
-        const totalActualExpenses =
-          (data.expenses ? Number(data.expenses) : 0) +
-          (data.transaction_expenses ? Number(data.transaction_expenses) : 0);
     
         setPlannedExpenses(data.planned_expenses || 0);
-        setActualExpenses(totalActualExpenses);
+
       } catch (error) {
         console.error("Virhe budjetin hakemisessa:", error);
       }
     };
     
-    // Nyt funktiot ovat käytettävissä `useEffect`-hookissa
     useEffect(() => {
       fetchBudget();
       fetchTransactions();
     }, [id]);
     
+    // Tallennetaan budjetin muutokset palvelimelle
+    const handleSave = async () => {
+      try {
+          const token = localStorage.getItem("token");
+          console.log("Saving budget with ID:", id);
   
-
-  const handleSave = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      console.log("Saving budget with ID:", id);
-
-      const response = await fetch(`http://localhost:5000/api/budgets/${id}`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          income: Number(income),
-          planned_expenses: plannedExpenses,
-          actual_expenses: actualExpenses,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Budjetin tallentaminen epäonnistui.");
+          const actualIncome = Number(income);
+  
+          // Asetetaan oletusarvoksi 0, jos arvot ovat tyhjiä
+          const validPlannedExpenses = plannedExpenses !== "" ? Number(plannedExpenses) : 0;
+  
+          const response = await fetch(`${API_BASE_URL}/api/budgets/${id}`, {
+              method: "PUT",
+              headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                  toteutunut_tulot: actualIncome,  // Käytetään actualIncome-muuttujaa
+                  suunniteltu_menot: validPlannedExpenses, // Käytetään validPlannedExpenses-muuttujaa
+              }),             
+          });
+  
+          if (!response.ok) {
+              throw new Error("Budjetin tallentaminen epäonnistui.");
+          }
+  
+          alert("Budjetti päivitetty!");
+          navigate("/budget-list"); // Siirrytään takaisin listaan
+  
+      } catch (error) {
+          console.error("Virhe tallennuksessa:", error);
       }
-
-      alert("Budjetti päivitetty!");
-      navigate("/budget-list");
-    } catch (error) {
-      console.error("Virhe tallennuksessa:", error);
-    }
   };
 
+  // **Lisätään uusi tapahtuma budjettiin**
   const addTransaction = async () => {
-    // Tarkistetaan, onko summa numero ja positiivinen
+    // **Tarkistetaan, että summa on numero ja positiivinen luku**
     const parsedSumma = parseFloat(summa);
     if (isNaN(parsedSumma) || parsedSumma <= 0) {
       alert("Virhe: Syötä kelvollinen summa!");
@@ -94,7 +100,7 @@ const EditBudget = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/transactions", {
+      const response = await fetch(`${API_BASE_URL}/api/transactions`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -123,10 +129,11 @@ const EditBudget = () => {
     }
   };
 
+  // Haetaan budjettiin liittyvät tapahtumat palvelimelta
   const fetchTransactions = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:5000/api/transactions/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/transactions/${id}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -141,7 +148,7 @@ const EditBudget = () => {
       const data = await response.json();
       console.log("Tapahtumat:", data);
   
-      // Suodatetaan tapahtumat menoihin ja tuloihin
+      // Erottelu menoihin ja tuloihin
       setAddedExpenses(data.filter(transaction => transaction.tyyppi === "meno"));
       setAddedIncomes(data.filter(transaction => transaction.tyyppi === "tulo"));
     } catch (error) {
@@ -151,14 +158,13 @@ const EditBudget = () => {
   
   // Käynnistetään haku heti, kun sivu latautuu
   useEffect(() => {
-    fetchBudget(); // Hakee budjetin tiedot
-    fetchTransactions(); // Hakee tapahtumat
+    fetchBudget(); // Haetaan budjetin tiedot
+    fetchTransactions(); // Haetaan tapahtumat
   }, [id]); 
   
-
   if (!budget) return <p>Ladataan budjettia...</p>;
 
-  // Kuukausien nimet
+  // Kuukaudet tekstinä valikossa
   const monthNames = {
     "01": "Tammikuu",
     "02": "Helmikuu",
@@ -192,16 +198,18 @@ const EditBudget = () => {
         marginTop: "20px",
       }}
     >
-      <h3 style={{ color: "black", marginBottom: "50px" }}> Muokkaa budjettia - {budget ? monthNames[budget.month] : ""}</h3>
+      {/* Otsikko, jossa kuukauden nimi */}
+      <h3 style={{ color: "black", marginBottom: "50px", fontSize: "28px" }}> Muokkaa budjettia - {budget ? monthNames[budget.month] : ""}</h3>
 
+      {/* Tulot */}
       <div style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "20px", gap: "10px" }}>
-        <label style={{ color: "black", whiteSpace: "nowrap", paddingLeft: "100px" }}>Tulot:</label>
+        <label style={{ color: "black", whiteSpace: "nowrap", paddingLeft: "10px" }}>Tulot:</label>
         <input
           type="number"
           step="0.01"
           value={income !== "" ? income : ""}
           onChange={(e) => setIncome(e.target.value)}
-          onBlur={(e) => setIncome(parseFloat(e.target.value).toFixed(2))} // Muotoilee luvun, kun käyttäjä poistuu kentästä
+          onBlur={(e) => setIncome(parseFloat(e.target.value).toFixed(2))} // **Muotoillaan luku kahdella desimaalilla**
           style={{
             width: "20%",
             minWidth: "200px",
@@ -214,8 +222,9 @@ const EditBudget = () => {
         />
       </div>
 
+      {/* Menot */}
       <div style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "20px", gap: "10px" }}>
-        <label style={{ color: "black", whiteSpace: "nowrap" }}>Suunnitellut menot:</label>
+        <label style={{ color: "black", whiteSpace: "nowrap" }}>Menot:</label>
         <input
           type="number"
           step="0.01"
@@ -234,26 +243,7 @@ const EditBudget = () => {
         />
       </div>
 
-      <div style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "20px", gap: "10px" }}>
-        <label style={{ color: "black", whiteSpace: "nowrap" }}>Toteutuneet menot:</label>
-        <input
-          type="number"
-          step="0.01"
-          value={actualExpenses !== "" ? actualExpenses : ""}
-          onChange={(e) => setActualExpenses(e.target.value)}
-          onBlur={(e) => setActualExpenses(parseFloat(e.target.value).toFixed(2))}
-          style={{
-            width: "20%",
-            minWidth: "200px",
-            backgroundColor: "white",
-            color: "black",
-            border: "1px solid #ccc",
-            padding: "10px",
-            borderRadius: "5px",
-          }}
-        />
-      </div>
-
+      {/* Näytetään lisätyt tapahtumat */}
       <h3 style={{ marginTop: "30px", color: "black" }}>Lisätyt tulot</h3>
       <ul style={{ listStyleType: "none", padding: 0 }}>
         {addedIncomes.length === 0 ? (
@@ -267,6 +257,7 @@ const EditBudget = () => {
         )}
       </ul>
 
+      {/* Näytetään lisätyt tapahtumat */}
       <h3 style={{ marginTop: "30px", color: "black" }}>Lisätyt menot</h3>
       <ul style={{ listStyleType: "none", padding: 0 }}>
         {addedExpenses.length === 0 ? (
@@ -280,8 +271,7 @@ const EditBudget = () => {
         )}
       </ul>
 
-
-
+      {/* Lisää tapahtuma */}
       <h3 style={{ marginTop: "30px", color: "black" }}>Lisää uusi tapahtuma</h3>
 
       <div style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "20px", gap: "10px" }}>
@@ -334,7 +324,7 @@ const EditBudget = () => {
           placeholder="Lisää kuvaus (valinnainen)"
           value={kuvaus}
           onChange={(e) => {
-            const newValue = e.target.value.replace(/[0-9]/g, ""); // Poistaa numerot
+            const newValue = e.target.value.replace(/[0-9]/g, "");
             setKuvaus(newValue);
           }}
           style={{
@@ -349,6 +339,7 @@ const EditBudget = () => {
         />
       </div>
 
+      {/* Lisää tapahtuma-painike */}
       <button
         onClick={addTransaction}
         style={{
@@ -364,6 +355,7 @@ const EditBudget = () => {
         Lisää tapahtuma
       </button>
 
+      {/* Tallennus-painike */}
       <button
         onClick={handleSave}
         style={{
@@ -379,6 +371,7 @@ const EditBudget = () => {
         Tallenna budjetti
       </button>
 
+      {/* Takaisin-painike */}
       <button
         onClick={() => navigate("/budget-list")}
         style={{
@@ -403,18 +396,22 @@ export default EditBudget;
 // import { useParams, useNavigate } from "react-router-dom";
 
 // const EditBudget = () => {
+//   // Haetaan budjetin ID URL-parametreista ja alustetaan navigointi
 //   const { id } = useParams();
 //   const navigate = useNavigate();
+
+//   // Tilamuuttujat budjetin ja tapahtumien hallintaan
 //   const [budget, setBudget] = useState(null);
 //   const [income, setIncome] = useState("");
 //   const [plannedExpenses, setPlannedExpenses] = useState(0);
-//   const [actualExpenses, setActualExpenses] = useState(0);
 //   const [transactions, setTransactions] = useState([]);
 //   const [transactionType, setTransactionType] = useState("meno");
 //   const [summa, setSumma] = useState("");
 //   const [kuvaus, setKuvaus] = useState("");
+//   const [addedExpenses, setAddedExpenses] = useState([]);
+//   const [addedIncomes, setAddedIncomes] = useState([]);
 
-//   useEffect(() => {
+//     // Haetaan budjetin tiedot palvelimelta
 //     const fetchBudget = async () => {
 //       try {
 //         const token = localStorage.getItem("token");
@@ -425,66 +422,68 @@ export default EditBudget;
 //             "Content-Type": "application/json",
 //           },
 //         });
-  
+    
 //         if (!response.ok) {
 //           throw new Error("Budjetin hakeminen epäonnistui.");
 //         }
-  
+    
 //         const data = await response.json();
-//         console.log("API Response:", data); // 🔍 Tarkista, näkyykö `transaction_expenses`
-  
+//         console.log("API Response:", data);
+    
+//         // Tallennetaan budjetin tiedot tila-muuttujiin
 //         setBudget(data);
-  
-//         //** Tulot haetaan `actual_income` **
 //         setIncome(data.actual_income ? Number(data.actual_income) : 0);
-  
-//         // ** Toteutuneet menot = `expenses` + `transaction_expenses` **
-//         const totalActualExpenses =
-//           (data.expenses ? Number(data.expenses) : 0) +
-//           (data.transaction_expenses ? Number(data.transaction_expenses) : 0);
-  
+    
 //         setPlannedExpenses(data.planned_expenses || 0);
-//         setActualExpenses(totalActualExpenses);
+
 //       } catch (error) {
 //         console.error("Virhe budjetin hakemisessa:", error);
 //       }
 //     };
+    
+//     useEffect(() => {
+//       fetchBudget();
+//       fetchTransactions();
+//     }, [id]);
+    
+//     // Tallennetaan budjetin muutokset palvelimelle
+//     const handleSave = async () => {
+//       try {
+//           const token = localStorage.getItem("token");
+//           console.log("Saving budget with ID:", id);
   
-//     fetchBudget();
-//   }, [id]); // Päivittyy aina, kun `id` muuttuu
+//           const actualIncome = Number(income);
   
-
-//   const handleSave = async () => {
-//     try {
-//       const token = localStorage.getItem("token");
-//       console.log("Saving budget with ID:", id);
-
-//       const response = await fetch(`http://localhost:5000/api/budgets/${id}`, {
-//         method: "PUT",
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({
-//           income,
-//           planned_expenses: plannedExpenses,
-//           actual_expenses: actualExpenses,
-//         }),
-//       });
-
-//       if (!response.ok) {
-//         throw new Error("Budjetin tallentaminen epäonnistui.");
+//           // Asetetaan oletusarvoksi 0, jos arvot ovat tyhjiä
+//           const validPlannedExpenses = plannedExpenses !== "" ? Number(plannedExpenses) : 0;
+  
+//           const response = await fetch(`http://localhost:5000/api/budgets/${id}`, {
+//               method: "PUT",
+//               headers: {
+//                   Authorization: `Bearer ${token}`,
+//                   "Content-Type": "application/json",
+//               },
+//               body: JSON.stringify({
+//                   toteutunut_tulot: actualIncome,  // Käytetään actualIncome-muuttujaa
+//                   suunniteltu_menot: validPlannedExpenses, // Käytetään validPlannedExpenses-muuttujaa
+//               }),             
+//           });
+  
+//           if (!response.ok) {
+//               throw new Error("Budjetin tallentaminen epäonnistui.");
+//           }
+  
+//           alert("Budjetti päivitetty!");
+//           navigate("/budget-list"); // Siirrytään takaisin listaan
+  
+//       } catch (error) {
+//           console.error("Virhe tallennuksessa:", error);
 //       }
-
-//       alert("Budjetti päivitetty!");
-//       navigate("/budget-list");
-//     } catch (error) {
-//       console.error("Virhe tallennuksessa:", error);
-//     }
 //   };
 
+//   // **Lisätään uusi tapahtuma budjettiin**
 //   const addTransaction = async () => {
-//     // Tarkistetaan, onko summa numero ja positiivinen
+//     // **Tarkistetaan, että summa on numero ja positiivinen luku**
 //     const parsedSumma = parseFloat(summa);
 //     if (isNaN(parsedSumma) || parsedSumma <= 0) {
 //       alert("Virhe: Syötä kelvollinen summa!");
@@ -515,14 +514,49 @@ export default EditBudget;
 //       setTransactions([...transactions, { tyyppi: transactionType, summa: parsedSumma, kuvaus }]);
 //       setSumma("");
 //       setKuvaus("");
+
+//       fetchTransactions();
 //     } catch (error) {
 //       console.error("Virhe lisättäessä tapahtumaa:", error);
 //     }
 //   };
 
+//   // Haetaan budjettiin liittyvät tapahtumat palvelimelta
+//   const fetchTransactions = async () => {
+//     try {
+//       const token = localStorage.getItem("token");
+//       const response = await fetch(`http://localhost:5000/api/transactions/${id}`, {
+//         method: "GET",
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//           "Content-Type": "application/json",
+//         },
+//       });
+  
+//       if (!response.ok) {
+//         throw new Error("Tapahtumien hakeminen epäonnistui.");
+//       }
+  
+//       const data = await response.json();
+//       console.log("Tapahtumat:", data);
+  
+//       // Erottelu menoihin ja tuloihin
+//       setAddedExpenses(data.filter(transaction => transaction.tyyppi === "meno"));
+//       setAddedIncomes(data.filter(transaction => transaction.tyyppi === "tulo"));
+//     } catch (error) {
+//       console.error("Virhe haettaessa tapahtumia:", error);
+//     }
+//   };
+  
+//   // Käynnistetään haku heti, kun sivu latautuu
+//   useEffect(() => {
+//     fetchBudget(); // Haetaan budjetin tiedot
+//     fetchTransactions(); // Haetaan tapahtumat
+//   }, [id]); 
+  
 //   if (!budget) return <p>Ladataan budjettia...</p>;
 
-//   // Kuukausien nimet
+//   // Kuukaudet tekstinä valikossa
 //   const monthNames = {
 //     "01": "Tammikuu",
 //     "02": "Helmikuu",
@@ -556,16 +590,18 @@ export default EditBudget;
 //         marginTop: "20px",
 //       }}
 //     >
-//       <h3 style={{ color: "black", marginBottom: "50px" }}> Muokkaa budjettia - {budget ? monthNames[budget.month] : ""}</h3>
+//       {/* Otsikko, jossa kuukauden nimi */}
+//       <h3 style={{ color: "black", marginBottom: "50px", fontSize: "28px" }}> Muokkaa budjettia - {budget ? monthNames[budget.month] : ""}</h3>
 
+//       {/* Tulot */}
 //       <div style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "20px", gap: "10px" }}>
-//         <label style={{ color: "black", whiteSpace: "nowrap", paddingLeft: "100px" }}>Tulot:</label>
+//         <label style={{ color: "black", whiteSpace: "nowrap", paddingLeft: "10px" }}>Tulot:</label>
 //         <input
 //           type="number"
 //           step="0.01"
 //           value={income !== "" ? income : ""}
 //           onChange={(e) => setIncome(e.target.value)}
-//           onBlur={(e) => setIncome(parseFloat(e.target.value).toFixed(2))} // Muotoilee luvun, kun käyttäjä poistuu kentästä
+//           onBlur={(e) => setIncome(parseFloat(e.target.value).toFixed(2))} // **Muotoillaan luku kahdella desimaalilla**
 //           style={{
 //             width: "20%",
 //             minWidth: "200px",
@@ -578,8 +614,9 @@ export default EditBudget;
 //         />
 //       </div>
 
+//       {/* Menot */}
 //       <div style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "20px", gap: "10px" }}>
-//         <label style={{ color: "black", whiteSpace: "nowrap" }}>Suunnitellut menot:</label>
+//         <label style={{ color: "black", whiteSpace: "nowrap" }}>Menot:</label>
 //         <input
 //           type="number"
 //           step="0.01"
@@ -598,38 +635,35 @@ export default EditBudget;
 //         />
 //       </div>
 
-//       <div style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "20px", gap: "10px" }}>
-//         <label style={{ color: "black", whiteSpace: "nowrap" }}>Toteutuneet menot:</label>
-//         <input
-//           type="number"
-//           step="0.01"
-//           value={actualExpenses !== "" ? actualExpenses : ""}
-//           onChange={(e) => setActualExpenses(e.target.value)}
-//           onBlur={(e) => setActualExpenses(parseFloat(e.target.value).toFixed(2))}
-//           style={{
-//             width: "20%",
-//             minWidth: "200px",
-//             backgroundColor: "white",
-//             color: "black",
-//             border: "1px solid #ccc",
-//             padding: "10px",
-//             borderRadius: "5px",
-//           }}
-//         />
-//       </div>
-
+//       {/* Näytetään lisätyt tapahtumat */}
 //       <h3 style={{ marginTop: "30px", color: "black" }}>Lisätyt tulot</h3>
 //       <ul style={{ listStyleType: "none", padding: 0 }}>
-//         {/* Tänne lisätään myöhemmin lista tuloista */}
+//         {addedIncomes.length === 0 ? (
+//           <li style={{ color: "black" }}>Ei lisättyjä tuloja</li>
+//         ) : (
+//           addedIncomes.map((income, index) => (
+//             <li key={index} style={{ color: "black" }}>
+//               {income.kuvaus}: {parseFloat(income.summa).toFixed(2)}€
+//             </li>
+//           ))
+//         )}
 //       </ul>
 
+//       {/* Näytetään lisätyt tapahtumat */}
 //       <h3 style={{ marginTop: "30px", color: "black" }}>Lisätyt menot</h3>
 //       <ul style={{ listStyleType: "none", padding: 0 }}>
-//         {/* Tänne lisätään myöhemmin lista menoista */}
+//         {addedExpenses.length === 0 ? (
+//           <li style={{ color: "black" }}>Ei lisättyjä menoja</li>
+//         ) : (
+//           addedExpenses.map((expense, index) => (
+//             <li key={index} style={{ color: "black" }}>
+//               {expense.kuvaus}: {parseFloat(expense.summa).toFixed(2)}€
+//             </li>
+//           ))
+//         )}
 //       </ul>
 
-
-
+//       {/* Lisää tapahtuma */}
 //       <h3 style={{ marginTop: "30px", color: "black" }}>Lisää uusi tapahtuma</h3>
 
 //       <div style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "20px", gap: "10px" }}>
@@ -682,7 +716,7 @@ export default EditBudget;
 //           placeholder="Lisää kuvaus (valinnainen)"
 //           value={kuvaus}
 //           onChange={(e) => {
-//             const newValue = e.target.value.replace(/[0-9]/g, ""); // Poistaa numerot
+//             const newValue = e.target.value.replace(/[0-9]/g, "");
 //             setKuvaus(newValue);
 //           }}
 //           style={{
@@ -697,6 +731,7 @@ export default EditBudget;
 //         />
 //       </div>
 
+//       {/* Lisää tapahtuma-painike */}
 //       <button
 //         onClick={addTransaction}
 //         style={{
@@ -712,6 +747,7 @@ export default EditBudget;
 //         Lisää tapahtuma
 //       </button>
 
+//       {/* Tallennus-painike */}
 //       <button
 //         onClick={handleSave}
 //         style={{
@@ -727,6 +763,7 @@ export default EditBudget;
 //         Tallenna budjetti
 //       </button>
 
+//       {/* Takaisin-painike */}
 //       <button
 //         onClick={() => navigate("/budget-list")}
 //         style={{
