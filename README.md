@@ -108,3 +108,5 @@ Käy testaamassa sovellus täältä! (https://budget-app-frontend-rguazeqqj-maki
 | 15.3. | 7 | Testattu toiminto käyttäjätietojen päivitys ja tilin poistaminen. Backendissä lisätty reitti käyttäjätietojen päivitykseen ja tilin poistamiseen, korjattu autentikointi ja tietokantakyselyt vastaamaan uusia käyttäjätietokenttiä. Tiedostojen siistiminen. |
 | 16.3. | 5 | Backendin päivittäminen Renderiin. Frontendin vieminen Verceliin: muutokset API-kutsuihin. README.md käyttöohjeet ja kuvaus projektista. |
 | 17.3. | 3 | Viimeistelytyöt ja palautusversion teko ja palautus. |
+
+Yhteenlasketut työtunnit: 177 tuntia.
