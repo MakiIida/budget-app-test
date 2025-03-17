@@ -2,7 +2,7 @@
 
  Budjettisovellus on käyttäjäystävällinen verkkosovellus, joka auttaa seuraamaan **tuloja**, **menoja** ja **säästöjä** kuukausi- ja vuositasolla. Käyttäjät voivat luoda, muokata ja poistaa budjettejaan sekä tarkastella taloudellista tilannettaan helposti.
 
-**Live-demo**: [TÄHÄN VERCELIN URL](https://your-app.vercel.app)
+**Live-demo**: (https://budget-app-frontend-rguazeqqj-makiiidas-projects.vercel.app/)
 
 ## **Ominaisuudet**
 - Käyttäjät voivat **rekisteröityä ja kirjautua sisään**  
@@ -71,4 +71,4 @@ npm install
 npm start
 ```
 
-Käy testaamassa sovellus täältä! [TÄHÄN VERCELIN URL](https://your-app.vercel.app)
+Käy testaamassa sovellus täältä! (https://budget-app-frontend-rguazeqqj-makiiidas-projects.vercel.app/)
