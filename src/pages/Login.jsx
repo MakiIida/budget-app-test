@@ -4,6 +4,8 @@ import { AuthContext } from "../context/AuthContext";
 import "../styles.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+console.log("API_BASE_URL:", API_BASE_URL);
+
 
 const Login = () => {
   // Käyttäjän autentikointitiedot
@@ -35,6 +37,7 @@ const Login = () => {
       });
 
       const data = await response.json();
+      console.log("API vastaus:", data);
       if (!response.ok) {
         throw new Error(data.error || "Kirjautuminen epäonnistui.");
       }
@@ -43,6 +46,9 @@ const Login = () => {
       localStorage.setItem("token", data.token);
       localStorage.setItem("savedEmail", email);
       setIsAuthenticated(true);
+
+      console.log("Tarkistetaan localStorage:", localStorage.getItem("token"));
+
       navigate("/dashboard"); // Ohjataan käyttäjä dashboard-sivulle
     } catch (error) {
       console.error("Kirjautumisvirhe:", error);
