@@ -2,7 +2,7 @@
 
  Budjettisovellus on käyttäjäystävällinen verkkosovellus, joka auttaa seuraamaan **tuloja**, **menoja** ja **säästöjä** kuukausi- ja vuositasolla. Käyttäjät voivat luoda, muokata ja poistaa budjettejaan sekä tarkastella taloudellista tilannettaan helposti.
 
-**Live-demo**: (https://budget-app-frontend-rguazeqqj-makiiidas-projects.vercel.app/)
+**Live-demo**: (https://youtu.be/hqP9k2pmOks)
 
 ## **Ominaisuudet**
 - Käyttäjät voivat **rekisteröityä ja kirjautua sisään**  

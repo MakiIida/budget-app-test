@@ -35,7 +35,7 @@ const Savings = () => {
       setBudgets(data);
 
       // Lasketaan yhteen kaikki säästöt
-      const savingsSum = data.reduce((acc, budget) => acc + (budget.total || 0), 0);
+      const savingsSum = data.reduce((acc, budget) => acc + ((budget.income || 0) - (budget.expenses || 0)), 0);
       setTotalSavings(savingsSum);
     } catch (error) {
       console.error("Virhe budjettien hakemisessa:", error);
@@ -76,7 +76,7 @@ const Savings = () => {
           <BarChart 
             data={budgets.map(b => ({
               name: `${monthNames[b.month - 1]} ${b.year}`, // Muunnetaan kuukausi numerosta nimeksi
-              savings: b.total
+              savings: (b.income || 0) - (b.expenses || 0)
             }))}
           >
             <XAxis dataKey="name" /> {/* X-akselilla kuukauden nimi ja vuosi */}
@@ -95,10 +95,10 @@ const Savings = () => {
             style={{
               padding: "10px",
               borderBottom: "1px solid #ccc",
-              color: budget.total >= 0 ? "black" : "#FF4500", // Negatiiviset säästöt punaisella
+              color: (budget.income - budget.expenses) >= 0 ? "black" : "#FF4500", // Negatiiviset säästöt punaisella
             }}
           >
-            {monthNames[budget.month - 1]} {budget.year}: {budget.total.toFixed(2)}€
+            {monthNames[budget.month - 1]} {budget.year}: {(budget.income - budget.expenses).toFixed(2)}€
           </li>
         ))}
       </ul>
