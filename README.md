@@ -74,7 +74,7 @@ npm install
 npm start
 ```
 
-Käy testaamassa sovellus täältä! (https://budget-app-frontend-rguazeqqj-makiiidas-projects.vercel.app/)
+Käy testaamassa sovellus täältä! (https://budget-app-test-one.vercel.app/login)
 
 ## **Tuntikirjanpito**
 
