@@ -21,8 +21,10 @@ const Settings = () => {
 
   //Haetaan kirjautuneen käyttäjän nimi
   useEffect(() => {
+    console.log("Haetaan käyttäjätietoja...");
     const fetchUserData = async () => {
       try {
+        console.log("Kutsutaan API:a osoitteeseen:", import.meta.env.VITE_API_BASE_URL);
         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/me`, {
           method: "GET",
           headers: {
@@ -32,6 +34,7 @@ const Settings = () => {
         });
 
         const data = await response.json();
+        console.log("Saatiin vastaus:", data);
         if (response.ok) {
           setUsername(data.name); // Tallennetaan käyttäjän nimi tilamuuttujaan
         } else {
