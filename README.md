@@ -2,8 +2,10 @@
 
  Budjettisovellus on käyttäjäystävällinen verkkosovellus, joka auttaa seuraamaan **tuloja**, **menoja** ja **säästöjä** kuukausi- ja vuositasolla. Käyttäjät voivat luoda, muokata ja poistaa budjettejaan sekä tarkastella taloudellista tilannettaan helposti.
 
-**Live-demo**: (https://youtu.be/hqP9k2pmOks)
+**Live-demo**: (https://youtu.be/h4M2ejz-C_0)
 **Projektin Backendin repo**: (https://github.com/MakiIida/budget-app-backend)
+**Projektin Frontendin repo Vercel**: (https://github.com/MakiIida/budget-app-test)
+**Projektin Frontendin repo Lokaalisti**: (https://github.com/MakiIida/budget-app-frontend)
 
 ## **Ominaisuudet**
 - Käyttäjät voivat **rekisteröityä ja kirjautua sisään**  
@@ -109,5 +111,6 @@ Käy testaamassa sovellus täältä! (https://budget-app-frontend-rguazeqqj-maki
 | 15.3. | 7 | Testattu toiminto käyttäjätietojen päivitys ja tilin poistaminen. Backendissä lisätty reitti käyttäjätietojen päivitykseen ja tilin poistamiseen, korjattu autentikointi ja tietokantakyselyt vastaamaan uusia käyttäjätietokenttiä. Tiedostojen siistiminen. |
 | 16.3. | 5 | Backendin päivittäminen Renderiin. Frontendin vieminen Verceliin: muutokset API-kutsuihin. README.md käyttöohjeet ja kuvaus projektista. |
 | 17.3. | 3 | Viimeistelytyöt ja palautusversion teko ja palautus. |
+| 18.3. | 5 | Korjattu API-kutsut ja päivitetty versio palautuksesta. |
 
-Yhteenlasketut työtunnit: 177 tuntia.
+Yhteenlasketut työtunnit: 182 tuntia.
