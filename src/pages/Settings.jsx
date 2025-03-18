@@ -251,7 +251,6 @@ const Settings = () => {
             fontWeight: "bold",
             padding: "12px 20px",
             borderRadius: "5px",
-            width: "48%",
             border: "none",
             cursor: "pointer",
             fontSize: "16px",
