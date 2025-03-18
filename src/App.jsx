@@ -11,6 +11,8 @@ import EditBudget from "./pages/EditBudget";
 import Savings from "./pages/Savings";
 import "./App.css";
 import "./styles.css";
+import React from "react";
+
 
 /**
  * Sovelluksen pääkomponentti, joka asettaa kontekstin ja reitityksen.

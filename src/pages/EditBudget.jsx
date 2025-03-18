@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import React from "react";
 
 const EditBudget = () => {
   // Haetaan budjetin ID URL-parametreista ja alustetaan navigointi

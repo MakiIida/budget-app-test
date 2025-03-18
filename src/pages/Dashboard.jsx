@@ -1,6 +1,8 @@
 import { useEffect, useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import React from "react";
+
 
 const Dashboard = () => {
   const { setIsAuthenticated } = useContext(AuthContext);

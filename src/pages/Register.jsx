@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import "../styles.css";
+import React from "react";
 
 const Register = () => {
   // Tallennetaan käyttäjän syöttämät tiedot

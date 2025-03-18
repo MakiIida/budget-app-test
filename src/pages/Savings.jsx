@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { useNavigate } from "react-router-dom";
+import React from "react";
 
 // Kuukaudet nimettynä
 const monthNames = [

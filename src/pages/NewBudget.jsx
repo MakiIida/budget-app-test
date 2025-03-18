@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import React from "react";
 
 const NewBudget = () => {
   const [month, setMonth] = useState("01"); // Oletuksena tammikuu
