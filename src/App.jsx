@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom"; // Ei enää BrowserRouteria tässä
 import { useContext } from "react";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -18,9 +18,7 @@ import "./styles.css";
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <MainApp />
-      </Router>
+      <MainApp />
     </AuthProvider>
   );
 }
@@ -35,18 +33,20 @@ function MainApp() {
   return (
     <div className="container">
       {/* Otsikko kaikille sivuille */}
-      <h1 style={{ textAlign: "center", color: "black", fontSize: "53px", fontWeight: "bold" }}>Budjettisovellus</h1>
+      <h1 style={{ textAlign: "center", color: "black", fontSize: "53px", fontWeight: "bold" }}>
+        Budjettisovellus
+      </h1>
 
       <Routes>
         <Route path="/" element={<h2>Tervetuloa Budjettisovellukseen!</h2>} />
-        <Route path="/login" element={<Login />} /> {/* Kirjautumissivu */}
-        <Route path="/register" element={<Register />} /> {/* Rekisteröitymissivu */}
-        <Route path="/dashboard" element={<Dashboard />} /> {/* Päänäkymä käyttäjälle */}
-        <Route path="/settings" element={<Settings />} /> {/* Käyttäjäasetukset */}
-        <Route path="/budget-list" element={<BudgetList />} /> {/* Budjettien listaus */}
-        <Route path="/new-budget" element={<NewBudget />} /> {/* Uuden budjetin luonti */}
-        <Route path="/edit-budget/:id" element={<EditBudget />} /> {/* Budjetin muokkaaminen */}
-        <Route path="/savings" element={<Savings />} /> {/* Säästöjen seuranta */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/budget-list" element={<BudgetList />} />
+        <Route path="/new-budget" element={<NewBudget />} />
+        <Route path="/edit-budget/:id" element={<EditBudget />} />
+        <Route path="/savings" element={<Savings />} />
       </Routes>
     </div>
   );
