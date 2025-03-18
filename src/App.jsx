@@ -14,6 +14,8 @@ import "./styles.css";
 import React from "react";
 
 
+console.log("VITE_API_BASE_URL:", import.meta.env.VITE_API_BASE_URL);
+
 /**
  * Sovelluksen pääkomponentti, joka asettaa kontekstin ja reitityksen.
  */
