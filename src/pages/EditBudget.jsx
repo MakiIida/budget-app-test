@@ -21,7 +21,7 @@ const EditBudget = () => {
     const fetchBudget = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(`http://localhost:5000/api/budgets/${id}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/budgets/${id}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -63,7 +63,7 @@ const EditBudget = () => {
           // Asetetaan oletusarvoksi 0, jos arvot ovat tyhjiä
           const validPlannedExpenses = plannedExpenses !== "" ? Number(plannedExpenses) : 0;
   
-          const response = await fetch(`http://localhost:5000/api/budgets/${id}`, {
+          const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/budgets/${id}`, {
               method: "PUT",
               headers: {
                   Authorization: `Bearer ${token}`,
@@ -98,7 +98,7 @@ const EditBudget = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/transactions", {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/transactions`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -131,7 +131,7 @@ const EditBudget = () => {
   const fetchTransactions = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:5000/api/transactions/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/transactions/${id}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

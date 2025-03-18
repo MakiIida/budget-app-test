@@ -19,7 +19,7 @@ const Dashboard = () => {
 
       try {
         // Haetaan käyttäjätiedot palvelimelta
-        const response = await fetch("http://localhost:5000/me", {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/me`, {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${token}`,

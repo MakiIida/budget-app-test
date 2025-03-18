@@ -19,7 +19,7 @@ const Savings = () => {
   const fetchBudgets = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/budgets", {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/budgets`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

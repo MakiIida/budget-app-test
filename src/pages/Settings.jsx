@@ -23,7 +23,7 @@ const Settings = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/me", {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/me`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -53,7 +53,7 @@ const Settings = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/users/me", {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/me`, {
         method: "PATCH",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -82,7 +82,7 @@ const Settings = () => {
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch("http://localhost:5000/api/users/me", {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/me`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`,

@@ -32,7 +32,7 @@ const BudgetList = () => {
         }
 
         // Haetaan budjetit palvelimelta
-        const response = await fetch("http://localhost:5000/api/budgets", {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/budgets`, {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${token}`,
@@ -70,7 +70,7 @@ const BudgetList = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:5000/api/budgets/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/budgets/${id}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`,

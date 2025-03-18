@@ -43,7 +43,7 @@ const NewBudget = () => {
     }
   
     try {
-      const response = await fetch(`http://localhost:5000/api/transactions/${budgetId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/transactions/${budgetId}`, {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${token}`
@@ -72,7 +72,7 @@ const NewBudget = () => {
 
     try {
       // Lähetetään budjetin tiedot palvelimelle
-      const budgetResponse = await fetch("http://localhost:5000/api/budgets", {
+      const budgetResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/budgets`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -100,7 +100,7 @@ const NewBudget = () => {
       // Tallenna kaikki tapahtumat tietokantaan
       if (transactions.length > 0) {
         for (const transaction of transactions) {
-          await fetch("http://localhost:5000/api/transactions", {
+          await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/transactions`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -165,7 +165,7 @@ const NewBudget = () => {
     useEffect(() => {
       const fetchCategories = async () => {
         try {
-          const response = await fetch("http://localhost:5000/api/categories");
+          const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/categories`);
           const data = await response.json();
           setCategories(data);
         } catch (error) {
