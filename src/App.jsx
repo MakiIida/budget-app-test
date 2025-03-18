@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom"; // Ei enää BrowserRouteria tässä
+import { Routes, Route } from "react-router-dom";
 import { useContext } from "react";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
